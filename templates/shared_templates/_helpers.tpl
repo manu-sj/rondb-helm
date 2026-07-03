@@ -69,6 +69,16 @@ annotations: {{ $.Values.serviceAccountAnnotations | toYaml | nindent 2 }}
 {{- end }}
 {{- end -}}
 
+{{/*
+    Common service account shared by all RonDB node pods (mgmd, ndbmtd, rdrs,
+    mysqld_exporter, benchmark, binlog servers). Having a dedicated, chart-owned
+    account lets it be annotated (e.g. for AWS IRSA) via serviceAccountAnnotations,
+    which the Kubernetes-owned 'default' account cannot.
+*/}}
+{{- define "rondb.serviceAccountName" -}}
+rondb
+{{- end -}}
+
 {{ define "rondb.storageClass.default" -}}
 {{ if .Values.resources.requests.storage.classes.default  }}
 storageClassName: {{ .Values.resources.requests.storage.classes.default | quote }}
